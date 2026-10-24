@@ -1,10 +1,15 @@
 import { useState } from "react";
 import Board from "../components/board/Board";
+import FilterBar from "../components/board/FilterBar";
 import JobFormModal from "../components/job/JobFormModal";
-import { useJobs } from "../context/JobsContext";
+import { useFilteredJobs } from "../hooks/useFilteredJobs";
+import { DEFAULT_FILTERS } from "../utils/constants";
+import { useJobs } from "../context/useJobs";
 
 export default function BoardPage() {
   const { jobs } = useJobs();
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const filteredJobs = useFilteredJobs(jobs, filters);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
 
@@ -28,7 +33,11 @@ export default function BoardPage() {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Board</h1>
-          <p className="text-sm text-slate-500">{jobs.length} jobs tracked</p>
+          <p className="text-sm text-slate-500">
+            {filteredJobs.length === jobs.length
+              ? `${jobs.length} jobs tracked`
+              : `Showing ${filteredJobs.length} of ${jobs.length} jobs`}
+          </p>
         </div>
         <button
           type="button"
@@ -39,7 +48,9 @@ export default function BoardPage() {
         </button>
       </div>
 
-      <Board jobs={jobs} onEdit={openEditForm} />
+      <FilterBar filters={filters} onChange={setFilters} />
+
+      <Board jobs={filteredJobs} onEdit={openEditForm} />
 
       {/* key makes React create a fresh form each time it opens */}
       {isFormOpen && (

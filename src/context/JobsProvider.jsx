@@ -1,8 +1,7 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
+import { JobsContext } from "./JobsContext";
 import { STORAGE_KEY } from "../utils/constants";
 import { sampleJobs } from "../data/sampleJobs";
-
-const JobsContext = createContext(null);
 
 // All changes to the jobs list happen here, in one place.
 function jobsReducer(jobs, action) {
@@ -62,10 +61,4 @@ export function JobsProvider({ children }) {
       {children}
     </JobsContext.Provider>
   );
-}
-
-export function useJobs() {
-  const context = useContext(JobsContext);
-  if (!context) throw new Error("useJobs must be used inside <JobsProvider>");
-  return context;
 }

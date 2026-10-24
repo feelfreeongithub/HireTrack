@@ -1,8 +1,31 @@
+import { useDraggable } from "@dnd-kit/core";
 import Badge from "../ui/Badge";
-import { useJobs } from "../../context/JobsContext";
 import { daysSince } from "../../utils/dates";
+import { useJobs } from "../../context/useJobs";
 
+// The draggable card that sits in a column
 export default function JobCard({ job, onEdit }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: job.id,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      aria-label={`${job.role} at ${job.company}. Press space to pick up and move.`}
+      className={`cursor-grab rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 active:cursor-grabbing ${
+        isDragging ? "opacity-40" : ""
+      }`}
+    >
+      <JobCardContent job={job} onEdit={onEdit} />
+    </div>
+  );
+}
+
+// The card's look. Also used for the floating copy while dragging.
+export function JobCardContent({ job, onEdit, isOverlay = false }) {
   const { dispatch } = useJobs();
   const days = daysSince(job.appliedOn);
 
@@ -12,8 +35,15 @@ export default function JobCard({ job, onEdit }) {
     }
   }
 
+  // Stop key presses on the buttons from starting a keyboard drag
+  const stopKeys = (event) => event.stopPropagation();
+
   return (
-    <article className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+    <article
+      className={`rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-800 ${
+        isOverlay ? "rotate-2 shadow-xl" : "shadow-sm"
+      }`}
+    >
       <h3 className="font-semibold leading-tight">{job.company}</h3>
       <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-400">
         {job.role}
@@ -33,22 +63,26 @@ export default function JobCard({ job, onEdit }) {
               ? "Applied today"
               : `Applied ${days}d ago`}
         </span>
-        <div className="flex gap-1">
-          <button
-            type="button"
-            onClick={() => onEdit(job)}
-            className="rounded px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-700"
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:hover:bg-slate-700"
-          >
-            Delete
-          </button>
-        </div>
+        {!isOverlay && (
+          <div className="flex gap-1">
+            <button
+              type="button"
+              onClick={() => onEdit(job)}
+              onKeyDown={stopKeys}
+              className="rounded px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-700"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              onKeyDown={stopKeys}
+              className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:hover:bg-slate-700"
+            >
+              Delete
+            </button>
+          </div>
+        )}
       </div>
     </article>
   );

@@ -20,3 +20,10 @@ export const PLATFORMS = [
 ];
 
 export const WORK_TYPES = ["Remote", "Hybrid", "Onsite"];
+
+export const DEFAULT_FILTERS = {
+  search: "",
+  platform: "All",
+  workType: "All",
+  sort: "newest",
+};

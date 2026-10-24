@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Modal from "../ui/Modal";
-import { useJobs } from "../../context/JobsContext";
 import { PLATFORMS, STATUSES, WORK_TYPES } from "../../utils/constants";
 import { todayISO } from "../../utils/dates";
+import { useJobs } from "../../context/useJobs";
 
 // A function, so 'Applied on' is always today's date when the form opens
 const emptyJob = () => ({
