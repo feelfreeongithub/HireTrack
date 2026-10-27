@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import ThemeToggle from "./ThemeToggle";
 
 const linkClass = ({ isActive }) =>
   `rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -14,13 +15,14 @@ export default function Header() {
         <h1 className="text-lg font-bold text-slate-900 dark:text-white">
           Hire<span className="text-blue-600">Track</span>
         </h1>
-        <nav className="flex gap-1">
+        <nav className="flex items-center gap-1">
           <NavLink to="/" end className={linkClass}>
             Board
           </NavLink>
           <NavLink to="/dashboard" className={linkClass}>
             Dashboard
           </NavLink>
+          <ThemeToggle />
         </nav>
       </div>
     </header>

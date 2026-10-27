@@ -13,7 +13,7 @@ import { STATUSES } from "../../utils/constants";
 import { columnKeyboardCoordinates } from "../../hooks/keyboardCoordinates";
 import { useJobs } from "../../context/useJobs";
 
-export default function Board({ jobs, onEdit }) {
+export default function Board({ jobs, onEdit, onOpen }) {
   const { dispatch } = useJobs();
   const [activeJob, setActiveJob] = useState(null);
 
@@ -57,6 +57,7 @@ export default function Board({ jobs, onEdit }) {
             status={status}
             jobs={jobs.filter((job) => job.status === status.id)}
             onEdit={onEdit}
+            onOpen={onOpen}
           />
         ))}
       </div>

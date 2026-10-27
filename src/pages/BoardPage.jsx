@@ -2,6 +2,7 @@ import { useState } from "react";
 import Board from "../components/board/Board";
 import FilterBar from "../components/board/FilterBar";
 import JobFormModal from "../components/job/JobFormModal";
+import JobDrawer from "../components/job/JobDrawer";
 import { useFilteredJobs } from "../hooks/useFilteredJobs";
 import { DEFAULT_FILTERS } from "../utils/constants";
 import { useJobs } from "../context/useJobs";
@@ -12,6 +13,9 @@ export default function BoardPage() {
   const filteredJobs = useFilteredJobs(jobs, filters);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
+  const [viewingId, setViewingId] = useState(null);
+  // Look the job up by id so the drawer always shows the latest data
+  const viewingJob = jobs.find((job) => job.id === viewingId) ?? null;
 
   function openAddForm() {
     setEditingJob(null);
@@ -19,6 +23,7 @@ export default function BoardPage() {
   }
 
   function openEditForm(job) {
+    setViewingId(null);
     setEditingJob(job);
     setIsFormOpen(true);
   }
@@ -50,7 +55,19 @@ export default function BoardPage() {
 
       <FilterBar filters={filters} onChange={setFilters} />
 
-      <Board jobs={filteredJobs} onEdit={openEditForm} />
+      <Board
+        jobs={filteredJobs}
+        onEdit={openEditForm}
+        onOpen={(job) => setViewingId(job.id)}
+      />
+
+      {viewingJob && (
+        <JobDrawer
+          job={viewingJob}
+          onClose={() => setViewingId(null)}
+          onEdit={openEditForm}
+        />
+      )}
 
       {/* key makes React create a fresh form each time it opens */}
       {isFormOpen && (

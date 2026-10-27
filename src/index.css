@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Native inputs (date pickers, scrollbars) follow the theme */
+.dark {
+  color-scheme: dark;
+}

@@ -1,10 +1,10 @@
 import { useDraggable } from "@dnd-kit/core";
 import Badge from "../ui/Badge";
-import { daysSince } from "../../utils/dates";
+import { daysSince, isFollowUpDue } from "../../utils/dates";
 import { useJobs } from "../../context/useJobs";
 
 // The draggable card that sits in a column
-export default function JobCard({ job, onEdit }) {
+export default function JobCard({ job, onEdit, onOpen }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: job.id,
   });
@@ -19,13 +19,13 @@ export default function JobCard({ job, onEdit }) {
         isDragging ? "opacity-40" : ""
       }`}
     >
-      <JobCardContent job={job} onEdit={onEdit} />
+      <JobCardContent job={job} onEdit={onEdit} onOpen={onOpen} />
     </div>
   );
 }
 
 // The card's look. Also used for the floating copy while dragging.
-export function JobCardContent({ job, onEdit, isOverlay = false }) {
+export function JobCardContent({ job, onEdit, onOpen, isOverlay = false }) {
   const { dispatch } = useJobs();
   const days = daysSince(job.appliedOn);
 
@@ -44,7 +44,20 @@ export function JobCardContent({ job, onEdit, isOverlay = false }) {
         isOverlay ? "rotate-2 shadow-xl" : "shadow-sm"
       }`}
     >
-      <h3 className="font-semibold leading-tight">{job.company}</h3>
+      <h3 className="font-semibold leading-tight">
+        {isOverlay ? (
+          job.company
+        ) : (
+          <button
+            type="button"
+            onClick={() => onOpen(job)}
+            onKeyDown={stopKeys}
+            className="text-left hover:text-blue-600 hover:underline"
+          >
+            {job.company}
+          </button>
+        )}
+      </h3>
       <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-400">
         {job.role}
       </p>
@@ -53,6 +66,7 @@ export function JobCardContent({ job, onEdit, isOverlay = false }) {
         <Badge>{job.platform}</Badge>
         <Badge>{job.workType}</Badge>
         {job.salary && <Badge>{job.salary}</Badge>}
+        {isFollowUpDue(job) && <Badge tone="danger">Follow up</Badge>}
       </div>
 
       <div className="mt-3 flex items-center justify-between">

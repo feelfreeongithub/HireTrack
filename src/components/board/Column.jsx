@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import JobCard from "./JobCard";
 
-export default function Column({ status, jobs, onEdit }) {
+export default function Column({ status, jobs, onEdit, onOpen }) {
   // The column's id is the status, so on drop we know the new status
   const { setNodeRef, isOver } = useDroppable({ id: status.id });
 
@@ -28,7 +28,9 @@ export default function Column({ status, jobs, onEdit }) {
             Drop a job here
           </p>
         ) : (
-          jobs.map((job) => <JobCard key={job.id} job={job} onEdit={onEdit} />)
+          jobs.map((job) => (
+            <JobCard key={job.id} job={job} onEdit={onEdit} onOpen={onOpen} />
+          ))
         )}
       </div>
     </section>
