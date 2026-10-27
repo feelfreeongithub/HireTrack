@@ -1,0 +1,36 @@
+name: CI
+
+# When to run: every push to main, and every pull request
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test:run
+
+      - name: Build
+        run: npm run build
+
+
+# What it says, in plain words:
+# “Whenever code is pushed to main, or a pull request is opened: take a fresh Linux computer, download my code, install Node 22, install my packages, then check the code (lint) → run my tests → build the app. If any step fails, mark it ❌.”
